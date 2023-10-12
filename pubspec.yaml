@@ -1,0 +1,41 @@
+name: mk8se
+description: A save editor for Mario Kart 8 (Wii U)
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.5 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  crc32_checksum: ^0.0.2
+  flutter_riverpod: ^2.4.3
+  riverpod: ^2.4.3
+  file_picker: ^5.5.0
+  url_launcher: ^6.1.14
+  package_info_plus: ^4.1.0
+  universal_html: ^2.2.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.0
+  riverpod_lint: ^2.3.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/userdata-empty.dat
+
+flutter_launcher_icons:
+  image_path: "assets/icon2.png"
+  windows:
+    generate: true
+  web:
+    generate: true
