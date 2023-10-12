@@ -10,6 +10,8 @@ Save editor for Mario Kart 8 (Wii U).
 </p>
 </div>
 
+MK8SE is available both for Windows and Linux and as a [web app](https://petlyh.github.io/MK8SE/).
+
 ## License
 
 MK8SE is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3as published by the Free Software Foundation.
