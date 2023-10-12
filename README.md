@@ -20,7 +20,7 @@ MK8SE is available both for Windows and Linux and as a [web app](https://petlyh.
 
 ## License
 
-MK8SE is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3as published by the Free Software Foundation.
+MK8SE is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License version 3 as published by the Free Software Foundation.
 
 MK8SE is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License version 3 for more details.
 
