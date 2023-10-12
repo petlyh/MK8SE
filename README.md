@@ -1,10 +1,14 @@
-<p align="center"><img src="assets/icon.png" width="150"></p> 
-<h2 align="center"><b>MK8SE</b></h2>
-<h4 align="center">Save editor for Mario Kart 8 (Wii U).</h4>
+<div align="center">
+<img src="assets/icon.png" width="150">
+
+## **MK8SE**
+
+Save editor for Mario Kart 8 (Wii U).
 
 <p align="center">
-<a href="https://www.gnu.org/licenses/agpl-3.0.html"><img alt="License: AGPLv3" src="https://img.shields.io/badge/license-AGPLv3-orange.svg?style=flat-square"></a>
+<a href="https://www.gnu.org/licenses/agpl-3.0.html"><img alt="License: AGPLv3" src="https://img.shields.io/badge/license-AGPLv3-purple.svg?style=flat-square"></a>
 </p>
+</div>
 
 ## License
 
