@@ -7,10 +7,10 @@ final dataProvider = NotifierProvider<DataNotifier, FileData>(DataNotifier.new);
 
 class DataNotifier extends Notifier<FileData> {
   @override
-  FileData build() => FileData.emptyFile;
+  FileData build() => FileData.empty();
 
   Future<void> loadEmpty() async {
-    state = FileData.emptyFile;
+    state = FileData.empty();
     ref.read(valuesProvider.notifier).readData(state);
   }
 

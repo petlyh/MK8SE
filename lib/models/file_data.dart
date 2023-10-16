@@ -10,13 +10,14 @@ class FileData {
   static const checksumOffset = NumberOffset(0x38);
   static const checksumDataStart = 0x48;
 
-  static late FileData emptyFile;
+  static late Uint8List _emptyData;
 
   static Future<void> initEmpty() async {
     final bytes = await rootBundle.load("assets/userdata-empty.dat");
-    final data = Uint8List.view(bytes.buffer);
-    emptyFile = FileData(data);
+    _emptyData = Uint8List.view(bytes.buffer);
   }
+
+  static FileData empty() => FileData(_emptyData);
 
   Uint8List _data;
   ByteData get byteData => _data.buffer.asByteData();
