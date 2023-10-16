@@ -1,0 +1,54 @@
+name: Build web
+
+on:
+    workflow_dispatch:
+    push:
+        branches:
+            - main
+        paths-ignore:
+            - "README.MD"
+            - "linux/**"
+            - "windows/**"
+            - ".github/**"
+
+permissions:
+    contents: write
+
+jobs:
+    build-web:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: subosito/flutter-action@v2
+              with:
+                flutter-version: "3.13.7"
+                channel: "stable"
+
+            - name: Checkout source code
+              uses: actions/checkout@v4
+              with:
+                  path: source
+                  ref: main
+
+            - name: Checkout GitHub Pages branch
+              uses: actions/checkout@v4
+              with:
+                  path: target
+                  ref: gh-pages
+            
+            - name: Remove files in GiHub Pages branch
+              run: rm -rvf $GITHUB_WORKSPACE/target/*
+
+            - name: Build
+              working-directory: ${{ github.workspace }}/source
+              run: |
+                flutter pub get
+                flutter build web --web-renderer html --output $GITHUB_WORKSPACE/target --base-href "/MK8SE/"
+
+            - working-directory: ${{ github.workspace }}/target
+              run: |
+                git config user.name github-actions
+                git config user.email github-actions@github.com
+                git add .
+                git commit -m "Build web version"
+                git push
