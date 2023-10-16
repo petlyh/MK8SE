@@ -45,7 +45,8 @@ jobs:
                 flutter pub get
                 flutter build web --web-renderer html --output $GITHUB_WORKSPACE/target --base-href "/MK8SE/"
 
-            - working-directory: ${{ github.workspace }}/target
+            - name: Push changes
+              working-directory: ${{ github.workspace }}/target
               run: |
                 git config user.name github-actions
                 git config user.email github-actions@github.com
