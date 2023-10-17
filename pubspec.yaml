@@ -34,7 +34,7 @@ flutter:
     - assets/userdata-empty.dat
 
 flutter_launcher_icons:
-  image_path: "assets/icon2.png"
+  image_path: "assets/icon.png"
   windows:
     generate: true
   web:
