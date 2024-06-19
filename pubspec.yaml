@@ -35,6 +35,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/icon.png
     - assets/userdata-empty.dat
 
 flutter_launcher_icons:
