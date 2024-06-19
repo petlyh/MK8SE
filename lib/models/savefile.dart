@@ -15,4 +15,14 @@ class Savefile {
   String get url => Uri.dataFromBytes(bytes.toList()).toString();
 
   Savefile withBytes(ByteList newBytes) => Savefile(newBytes, path: path);
+
+  @override
+  bool operator ==(Object other) =>
+      other is Savefile &&
+      runtimeType == other.runtimeType &&
+      bytes == other.bytes &&
+      path == other.path;
+
+  @override
+  int get hashCode => Object.hash(runtimeType, bytes, path);
 }

@@ -1,20 +1,16 @@
-import "package:crc32_checksum/crc32_checksum.dart";
 import "package:file_picker/file_picker.dart";
 import "package:flutter/foundation.dart";
 import "package:mk8se/models/byte_list.dart";
 import "package:mk8se/models/savefile.dart";
 import "package:mk8se/providers/empty_savefile.dart";
 import "package:mk8se/providers/savefile_repository.dart";
-import "package:mk8se/providers/values_controller.dart";
+import "package:mk8se/providers/updated_savefile.dart";
 import "package:riverpod/riverpod.dart";
 
 final savefileControllerProvider =
     NotifierProvider<SavefileController, Savefile>(SavefileController.new);
 
 class SavefileController extends Notifier<Savefile> {
-  static const _checksumOffset = 0x38;
-  static const _checksumDataOffset = 0x48;
-
   @override
   Savefile build() => ref.read(emptySavefileProvider);
 
@@ -25,12 +21,12 @@ class SavefileController extends Notifier<Savefile> {
       state = Savefile(ByteList.fromUint8List(bytes));
 
   Future<void> saveInPlace() async =>
-      await SavefileRepository.writeInPlace(_getUpdatedSavefile());
+      await SavefileRepository.writeInPlace(_updatedSavefile);
 
   Future<void> saveTo(String path) async =>
-      await SavefileRepository.write(_getUpdatedSavefile(), path);
+      await SavefileRepository.write(_updatedSavefile, path);
 
-  void saveWeb() => SavefileRepository.saveWeb(_getUpdatedSavefile());
+  void saveWeb() => SavefileRepository.saveWeb(_updatedSavefile);
 
   /// Downloads the savefile if on web, otherwise saves it in place.
   Future<void> savePlatform() async => kIsWeb ? saveWeb() : await saveInPlace();
@@ -57,14 +53,5 @@ class SavefileController extends Notifier<Savefile> {
     }
   }
 
-  Savefile _getUpdatedSavefile() {
-    final values = ref.read(valuesControllerProvider);
-    final bytes = values.write(state.bytes);
-    final checksum = _calculateChecksum(bytes);
-    final updatedBytes = bytes.withInt32At(checksum, _checksumOffset);
-    return state.withBytes(updatedBytes);
-  }
-
-  int _calculateChecksum(ByteList bytes) =>
-      Crc32.calculate(bytes.toSublist(_checksumDataOffset));
+  Savefile get _updatedSavefile => ref.read(updatedSavefileFamily(state));
 }
