@@ -1,9 +1,9 @@
-import "package:file_picker/file_picker.dart";
-import "package:flutter/foundation.dart";
+import "dart:async";
+
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
-import "package:mk8se/providers/data.dart";
-import "package:mk8se/providers/values.dart";
+import "package:mk8se/providers/savefile_controller.dart";
+import "package:mk8se/providers/values_controller.dart";
 
 abstract class CustomButton extends ConsumerWidget {
   const CustomButton({super.key, this.enabled = true});
@@ -13,9 +13,9 @@ abstract class CustomButton extends ConsumerWidget {
   String get name;
   IconData get icon;
 
-  Future<void> onTap(WidgetRef ref);
+  FutureOr<void> onTap(WidgetRef ref);
 
-  void _onTap(BuildContext context, WidgetRef ref) async {
+  Future<void> _onTap(BuildContext context, WidgetRef ref) async {
     try {
       await onTap(ref);
     } catch (e) {
@@ -24,24 +24,24 @@ abstract class CustomButton extends ConsumerWidget {
       }
 
       showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: const Text("Error"),
-                content: Text(e.toString()),
-                actions: [
-                  TextButton(
-                    child: const Text("Close"),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ));
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Error"),
+          content: Text(e.toString()),
+          actions: [
+            TextButton(
+              child: const Text("Close"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
     }
   }
 
   static final style = ButtonStyle(
-    padding:
-        MaterialStateProperty.all(const EdgeInsets.symmetric(horizontal: 8)),
-    shape: MaterialStateProperty.all(
+    padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 8)),
+    shape: WidgetStateProperty.all(
       RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(4),
       ),
@@ -64,90 +64,69 @@ abstract class CustomButton extends ConsumerWidget {
 
 class EmptyButton extends CustomButton {
   @override
-  final String name = "New";
+  String get name => "New";
   @override
-  final IconData icon = Icons.insert_drive_file_outlined;
+  IconData get icon => Icons.insert_drive_file_outlined;
 
   const EmptyButton({super.key});
 
   @override
-  Future<void> onTap(WidgetRef ref) async {
-    await ref.read(dataProvider.notifier).loadEmpty();
+  void onTap(WidgetRef ref) {
+    ref.invalidate(savefileControllerProvider);
+    // Invalidate the values provider to make sure the values are reset
+    // even if the loaded savefile was already the empty savefile.
+    ref.invalidate(valuesControllerProvider);
   }
 }
 
 class LoadButton extends CustomButton {
   @override
-  final String name = "Load";
+  String get name => "Load";
   @override
-  final IconData icon = Icons.upload_file;
+  IconData get icon => Icons.upload_file;
 
   const LoadButton({super.key});
 
   @override
-  Future<void> onTap(WidgetRef ref) async {
-    final result = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ["dat"]);
-
-    if (result == null || result.files.isEmpty) {
-      return;
-    }
-
-    if (kIsWeb) {
-      final bytes = result.files.first.bytes!;
-      ref.read(dataProvider.notifier).loadBytes(bytes);
-      return;
-    }
-
-    final filepath = result.paths.first!;
-    await ref.read(dataProvider.notifier).load(filepath);
-  }
+  Future<void> onTap(WidgetRef ref) async =>
+      await ref.read(savefileControllerProvider.notifier).loadFileDialog();
 }
 
 class SaveButton extends CustomButton {
   @override
-  final String name = "Save";
+  String get name => "Save";
   @override
-  final IconData icon = Icons.save_alt;
+  IconData get icon => Icons.save_alt;
 
   const SaveButton({super.key, super.enabled});
 
   @override
-  Future<void> onTap(WidgetRef ref) async {
-    await ref.read(dataProvider.notifier).save();
-  }
+  Future<void> onTap(WidgetRef ref) async =>
+      await ref.read(savefileControllerProvider.notifier).savePlatform();
 }
 
 class SaveAsButton extends CustomButton {
   @override
-  final String name = "Save As";
+  String get name => "Save As";
   @override
-  final IconData icon = Icons.save_alt;
+  IconData get icon => Icons.save_alt;
 
   const SaveAsButton({super.key});
 
   @override
-  Future<void> onTap(WidgetRef ref) async {
-    final filepath = await FilePicker.platform
-        .saveFile(type: FileType.custom, allowedExtensions: ["dat"]);
-
-    if (filepath == null) {
-      return;
-    }
-
-    await ref.read(dataProvider.notifier).saveAs(filepath);
-  }
+  Future<void> onTap(WidgetRef ref) async =>
+      await ref.read(savefileControllerProvider.notifier).saveFileDialog();
 }
 
 class UnlockAllButton extends CustomButton {
   @override
-  final String name = "Unlock All";
+  String get name => "Unlock All";
   @override
-  final IconData icon = Icons.lock_open;
+  IconData get icon => Icons.lock_open;
 
   const UnlockAllButton({super.key});
 
   @override
-  Future<void> onTap(WidgetRef ref) async =>
-      ref.read(valuesProvider.notifier).unlockAll();
+  void onTap(WidgetRef ref) =>
+      ref.read(valuesControllerProvider.notifier).unlockAll();
 }

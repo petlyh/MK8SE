@@ -29,34 +29,41 @@ class SpinBox extends StatelessWidget {
     final cursorPosition = value.toString().length;
 
     return Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-              tooltip: "Decrease",
-              onPressed: () => onNumberChange(value - 1),
-              icon: const Icon(Icons.remove)),
-          SizedBox(
-            width: 100,
-            child: TextField(
-              enableInteractiveSelection: false,
-              textAlign: TextAlign.center,
-              controller: TextEditingController.fromValue(TextEditingValue(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          tooltip: "Decrease",
+          onPressed: () => onNumberChange(value - 1),
+          icon: const Icon(Icons.remove),
+        ),
+        SizedBox(
+          width: 100,
+          child: TextField(
+            enableInteractiveSelection: false,
+            textAlign: TextAlign.center,
+            controller: TextEditingController.fromValue(
+              TextEditingValue(
                 text: value.toString(),
                 selection: TextSelection(
-                    baseOffset: cursorPosition, extentOffset: cursorPosition),
-              )),
-              onChanged: onTextChange,
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly
-              ], // Only numbers can be entered
+                  baseOffset: cursorPosition,
+                  extentOffset: cursorPosition,
+                ),
+              ),
             ),
+            onChanged: onTextChange,
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+            ], // Only numbers can be entered
           ),
-          IconButton(
-              tooltip: "Increase",
-              onPressed: () => onNumberChange(value + 1),
-              icon: const Icon(Icons.add)),
-        ]);
+        ),
+        IconButton(
+          tooltip: "Increase",
+          onPressed: () => onNumberChange(value + 1),
+          icon: const Icon(Icons.add),
+        ),
+      ],
+    );
   }
 }

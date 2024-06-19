@@ -10,6 +10,7 @@ on:
             - "linux/**"
             - "windows/**"
             - ".github/**"
+            - "test/**"
 
 permissions:
     contents: write
@@ -21,7 +22,7 @@ jobs:
         steps:
             - uses: subosito/flutter-action@v2
               with:
-                flutter-version: "3.13.7"
+                flutter-version: "3.22.2"
                 channel: "stable"
 
             - name: Checkout source code

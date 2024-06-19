@@ -1,7 +1,6 @@
-import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
-import "package:mk8se/models/models.dart";
+import "package:mk8se/providers/empty_savefile.dart";
 import "package:mk8se/widgets/main_panel.dart";
 import "package:mk8se/widgets/top_bar.dart";
 import "package:package_info_plus/package_info_plus.dart";
@@ -9,15 +8,21 @@ import "package:url_launcher/url_launcher_string.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FileData.initEmpty();
-  runApp(const ProviderScope(child: App()));
+
+  final emptySavefile = await readEmptySavefile();
+
+  runApp(
+    ProviderScope(
+      overrides: [emptySavefileProvider.overrideWithValue(emptySavefile)],
+      child: const App(),
+    ),
+  );
 }
 
 class App extends StatelessWidget {
   const App({super.key});
 
-  // disable splash animations on web
-  static const splashFactory = kIsWeb ? NoSplash.splashFactory : null;
+  static const splashFactory = NoSplash.splashFactory;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +38,9 @@ class App extends StatelessWidget {
         splashFactory: splashFactory,
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
-            seedColor: Colors.blue, brightness: Brightness.dark),
+          seedColor: Colors.blue,
+          brightness: Brightness.dark,
+        ),
         useMaterial3: true,
         visualDensity: VisualDensity.compact,
       ),
@@ -50,19 +57,21 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        scrolledUnderElevation: 0,
+        forceMaterialTransparency: true,
         toolbarHeight: 48,
         titleSpacing: 4,
         title: const TopRow(),
         actions: [
           IconButton(
-              tooltip: "Source Code",
-              onPressed: () => launchUrlString(repoUrl),
-              icon: const Icon(Icons.code)),
+            tooltip: "Source Code",
+            onPressed: () => launchUrlString(repoUrl),
+            icon: const Icon(Icons.code),
+          ),
           IconButton(
-              tooltip: "Info",
-              onPressed: () => showInfo(context),
-              icon: const Icon(Icons.info_outline)),
+            tooltip: "Info",
+            onPressed: () => showInfo(context),
+            icon: const Icon(Icons.info_outline),
+          ),
           const SizedBox(width: 4),
         ],
       ),
@@ -70,7 +79,7 @@ class MainPage extends StatelessWidget {
     );
   }
 
-  void showInfo(BuildContext context) async {
+  Future<void> showInfo(BuildContext context) async {
     final packageInfo = await PackageInfo.fromPlatform();
 
     if (!context.mounted) {

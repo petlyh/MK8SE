@@ -93,7 +93,7 @@ BEGIN
             VALUE "FileDescription", "MK8SE" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "MK8SE" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2023 io.github.petlyh. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 io.github.petlyh. All rights reserved." "\0"
             VALUE "OriginalFilename", "mk8se.exe" "\0"
             VALUE "ProductName", "MK8SE" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

@@ -1,11 +1,12 @@
+import "package:built_collection/built_collection.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
-import "package:mk8se/models/models.dart";
-import "package:mk8se/providers/values.dart";
+import "package:mk8se/models/value.dart";
+import "package:mk8se/providers/values_controller.dart";
 import "package:mk8se/widgets/spinbox.dart";
 
 final selectedCategoryProvider = StateProvider<String>(
-  (ref) => values.keys.first,
+  (ref) => ref.read(valuesControllerProvider).first.name,
 );
 
 class MainPanel extends ConsumerWidget {
@@ -16,7 +17,7 @@ class MainPanel extends ConsumerWidget {
     return const Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Expanded(flex: 1, child: CategoriesPanel()),
+        Expanded(child: CategoriesPanel()),
         VerticalDivider(width: 0),
         Expanded(flex: 2, child: ValuesEditorPanel()),
       ],
@@ -27,18 +28,26 @@ class MainPanel extends ConsumerWidget {
 class CategoriesPanel extends ConsumerWidget {
   const CategoriesPanel({super.key});
 
+  void Function() setSelected(WidgetRef ref, String category) =>
+      () => ref.read(selectedCategoryProvider.notifier).state = category;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categories = values.keys;
+    final categories = ref.read(valuesControllerProvider);
+    final selectedCategory = ref.watch(selectedCategoryProvider);
 
     return ListView(
       children: categories
-          .map((category) => ListTile(
-                title: Text(category, style: const TextStyle(fontSize: 14)),
-                onTap: () => ref.read(selectedCategoryProvider.notifier).state =
-                    category,
-                selected: category == ref.watch(selectedCategoryProvider),
-              ))
+          .map(
+            (category) => ListTile(
+              title: Text(
+                category.name,
+                style: const TextStyle(fontSize: 14),
+              ),
+              onTap: setSelected(ref, category.name),
+              selected: category.name == selectedCategory,
+            ),
+          )
           .toList(),
     );
   }
@@ -47,41 +56,63 @@ class CategoriesPanel extends ConsumerWidget {
 class ValuesEditorPanel extends ConsumerWidget {
   const ValuesEditorPanel({super.key});
 
-  Widget? valueEditor(
-      WidgetRef ref, MapEntry<String, OffsetValueHolder<dynamic>> entry) {
-    final holder = entry.value;
-    final offsetType = holder.offset.runtimeType;
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final categoryName = ref.watch(selectedCategoryProvider);
 
-    if (offsetType == UnlockableOffset) {
-      return Checkbox(
-          value: holder.value as bool,
-          onChanged: (value) =>
-              ref.read(valuesProvider.notifier).setValue(holder, value));
-    } else if (offsetType == NumberOffset) {
-      return SpinBox(
-          value: holder.value as int,
-          onChange: (value) =>
-              ref.read(valuesProvider.notifier).setValue(holder, value));
-    }
-    return null;
+    // Converted to BuiltList so RiverPod can check for equality
+    // and prevent unnecessary rebuilds
+    final valueNames = ref.watch(
+      valuesControllerProvider
+          .select((v) => BuiltList.of(v.getCategory(categoryName)!.valueNames)),
+    );
+
+    return ListView(
+      // Key prevents checkboxes being reused and animated when
+      // switching to a different category page.
+      key: ValueKey(categoryName),
+      children: valueNames
+          .map((valueName) => ValueEntry(categoryName, valueName))
+          .toList(),
+    );
   }
+}
+
+class ValueEntry extends ConsumerWidget {
+  const ValueEntry(this.categoryName, this.valueName, {super.key});
+
+  final String categoryName;
+  final String valueName;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final category = ref.watch(selectedCategoryProvider);
-    ref.watch(valuesProvider);
-    final entries =
-        ref.watch(valuesProvider.notifier).getCategoryEntries(category);
+    final value = ref.watch(
+      valuesControllerProvider
+          .select((v) => v.getValue(categoryName, valueName)!),
+    );
 
-    return ListView(
-      children: entries
-          .map((entry) => ListTile(
-              contentPadding: const EdgeInsets.only(left: 16, right: 8),
-              dense: true,
-              title: Text(entry.key, style: const TextStyle(fontSize: 14)),
-              trailing:
-                  Transform.scale(scale: 0.9, child: valueEditor(ref, entry))))
-          .toList(),
+    final valuesController = ref.read(valuesControllerProvider.notifier);
+
+    return ListTile(
+      contentPadding: const EdgeInsets.only(left: 16, right: 8),
+      dense: true,
+      title: Text(valueName, style: const TextStyle(fontSize: 14)),
+      onTap: value is UnlockableValue
+          ? () => valuesController.setValue(value.withValue(!value.isUnlocked))
+          : null,
+      trailing: Transform.scale(
+        scale: 0.9,
+        child: switch (value) {
+          UnlockableValue() => Checkbox(
+              value: value.isUnlocked,
+              onChanged: (v) => valuesController.setValue(value.withValue(v!)),
+            ),
+          NumberValue() => SpinBox(
+              value: value.number,
+              onChange: (v) => valuesController.setValue(value.withValue(v)),
+            ),
+        },
+      ),
     );
   }
 }

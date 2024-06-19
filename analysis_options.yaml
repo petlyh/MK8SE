@@ -1,4 +1,4 @@
-include: package:flutter_lints/flutter.yaml
+include: package:lint/strict.yaml
 
 linter:
   rules:
@@ -8,5 +8,8 @@ analyzer:
   language:
       strict-casts: true
       strict-raw-types: true
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
   plugins:
     - custom_lint
