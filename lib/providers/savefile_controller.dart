@@ -23,8 +23,10 @@ class SavefileController extends Notifier<Savefile> {
   Future<void> saveInPlace() async =>
       await SavefileRepository.writeInPlace(_updatedSavefile);
 
-  Future<void> saveTo(String path) async =>
-      await SavefileRepository.write(_updatedSavefile, path);
+  Future<void> saveTo(String path) async {
+    await SavefileRepository.write(_updatedSavefile, path);
+    state = Savefile(state.bytes, path: path);
+  }
 
   void saveWeb() => SavefileRepository.saveWeb(_updatedSavefile);
 
