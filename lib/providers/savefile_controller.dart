@@ -53,5 +53,11 @@ class SavefileController extends Notifier<Savefile> {
     }
   }
 
+  void writeInt8(int number, int offset) =>
+      state = state.withBytes(state.bytes.withInt8At(number, offset));
+
+  void writeInt32(int number, int offset) =>
+      state = state.withBytes(state.bytes.withInt32At(number, offset));
+
   Savefile get _updatedSavefile => ref.read(updatedSavefileFamily(state));
 }

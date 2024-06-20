@@ -1,5 +1,6 @@
 import "dart:async";
 
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:mk8se/providers/savefile_controller.dart";
@@ -92,13 +93,25 @@ class LoadButton extends CustomButton {
       await ref.read(savefileControllerProvider.notifier).loadFileDialog();
 }
 
-class SaveButton extends CustomButton {
+class SaveButton extends ConsumerWidget {
+  const SaveButton({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isSaveableInPlace = ref
+        .watch(savefileControllerProvider.select((s) => s.isSaveableInPlace));
+
+    return _SaveButton(enabled: isSaveableInPlace || kIsWeb);
+  }
+}
+
+class _SaveButton extends CustomButton {
   @override
   String get name => "Save";
   @override
   IconData get icon => Icons.save_alt;
 
-  const SaveButton({super.key, super.enabled});
+  const _SaveButton({super.enabled});
 
   @override
   Future<void> onTap(WidgetRef ref) async =>

@@ -1,8 +1,10 @@
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart";
 import "package:flutter_riverpod/flutter_riverpod.dart";
 import "package:mk8se/providers/empty_savefile.dart";
+import "package:mk8se/widgets/advanced.dart";
+import "package:mk8se/widgets/buttons.dart";
 import "package:mk8se/widgets/main_panel.dart";
-import "package:mk8se/widgets/top_bar.dart";
 import "package:package_info_plus/package_info_plus.dart";
 import "package:url_launcher/url_launcher_string.dart";
 
@@ -60,8 +62,27 @@ class MainPage extends StatelessWidget {
         forceMaterialTransparency: true,
         toolbarHeight: 48,
         titleSpacing: 4,
-        title: const TopRow(),
+        title: const SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              EmptyButton(),
+              LoadButton(),
+              SaveButton(),
+              if (!kIsWeb) SaveAsButton(),
+              UnlockAllButton(),
+            ],
+          ),
+        ),
         actions: [
+          IconButton(
+            tooltip: "Advanced",
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => const AdvancedDialog(),
+            ),
+            icon: const Icon(Icons.architecture),
+          ),
           IconButton(
             tooltip: "Source Code",
             onPressed: () => launchUrlString(repoUrl),
