@@ -38,6 +38,7 @@ final Values _initialValues = Values(
         const UnlockableValue("Metal Mario", 0x1AA5),
         const UnlockableValue("Pink Gold Peach", 0x1AA6),
         const UnlockableValue("Lakitu", 0x1AA7),
+        const UnlockableValue("Toadette", 0x1A9E),
         const UnlockableValue("Baby Rosalina", 0x1AAD),
         const UnlockableValue("Larry", 0x1AAE),
         const UnlockableValue("Lemmy", 0x1AAF),
