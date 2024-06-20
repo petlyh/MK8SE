@@ -14,9 +14,9 @@ MK8SE is available both for Windows and Linux and as a [web app](https://petlyh.
 
 ## Screenshots
 
-<img width="538" alt="screenshot1" src="https://github.com/petlyh/MK8SE/assets/88139840/582dce73-5cea-4ff5-90c4-bbb162302d68">
+<img width="538" alt="Screenshot 1" src="assets/screenshot1.png">
 
-<img width="539" alt="screenshot2" src="https://github.com/petlyh/MK8SE/assets/88139840/47eb41d0-6228-4dda-8010-afd6e4bcbc3b">
+<img width="539" alt="Screenshot 2" src="assets/screenshot2.png">
 
 ## License
 

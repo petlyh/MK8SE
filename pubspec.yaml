@@ -2,7 +2,7 @@ name: mk8se
 description: A save editor for Mario Kart 8 (Wii U)
 publish_to: 'none'
 
-version: 1.0.0+1
+version: 1.1.0+2
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
