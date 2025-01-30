@@ -32,6 +32,17 @@ final Values _initialValues = Values(
       ]),
     ),
     Category(
+      name: "Cups",
+      values: BuiltList.of([
+        const UnlockableValue("Flower", 0x1A71),
+        const UnlockableValue("Star", 0x1A72),
+        const UnlockableValue("Special", 0x1A73),
+        const UnlockableValue("Banana", 0x1A75),
+        const UnlockableValue("Leaf", 0x1A76),
+        const UnlockableValue("Lightning", 0x1A77),
+      ]),
+    ),
+    Category(
       name: "Characters",
       values: BuiltList.of([
         const UnlockableValue("Rosalina", 0x1AA4),
